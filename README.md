@@ -1,0 +1,1 @@
+Idrc about this use it if u want, probably buggy did ts just cuz i was bored, basically its an ai chatbot which always says that whatever "user" said the "ai" cannot answer cuz it is against standards, so its perpously a shit ai
