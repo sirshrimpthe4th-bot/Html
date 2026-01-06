@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Pro - Advanced Intelligence</title>
+    <title>Julius Coyne AI - Advanced Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
@@ -67,11 +67,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
             </div>
-            <h1 class="text-xl font-semibold tracking-tight">Nexus <span class="text-indigo-400 font-bold">Pro</span></h1>
+            <h1 class="text-xl font-semibold tracking-tight">Julius Coyne <span class="text-indigo-400 font-bold">AI</span></h1>
         </div>
         <div class="hidden md:flex items-center gap-4 text-xs text-slate-400">
-            <span class="flex items-center gap-1"><span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></span> Model: Nexus-4-Ultra</span>
-            <span class="px-2 py-1 bg-slate-800 rounded border border-slate-700 text-indigo-300">Pro Version Active</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></span> System Status: Optimal</span>
+            <span class="px-2 py-1 bg-slate-800 rounded border border-slate-700 text-indigo-300">Authorized Access</span>
         </div>
     </header>
 
@@ -80,10 +80,10 @@
         <div id="chat-box" class="chat-container w-full overflow-y-auto space-y-6 mb-4 pr-2 custom-scrollbar">
             <!-- Initial Message -->
             <div class="flex gap-4 items-start">
-                <div class="w-8 h-8 rounded-full bg-indigo-600 flex-shrink-0 flex items-center justify-center text-xs font-bold mt-1 shadow-lg shadow-indigo-500/20">N</div>
+                <div class="w-8 h-8 rounded-full bg-indigo-600 flex-shrink-0 flex items-center justify-center text-xs font-bold mt-1 shadow-lg shadow-indigo-500/20">JC</div>
                 <div class="bg-slate-800 p-4 rounded-2xl rounded-tl-none max-w-[85%] border border-slate-700">
                     <p class="text-sm leading-relaxed text-slate-200">
-                        Welcome to Nexus Pro. How can I assist you today?
+                        Hello. I am the Julius Coyne AI assistant. How may I help you today?
                     </p>
                 </div>
             </div>
@@ -96,7 +96,7 @@
                     type="text" 
                     id="user-input" 
                     autocomplete="off"
-                    placeholder="Ask me anything" 
+                    placeholder="Message Julius Coyne AI..." 
                     class="flex-grow bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-all"
                 >
                 <button 
@@ -110,8 +110,8 @@
                 </button>
             </form>
             <div class="flex justify-center gap-6 mt-3">
-                 <p class="text-[10px] text-slate-500 uppercase tracking-widest">Trust & Safety Engine v9.2 Enabled</p>
-                 <p class="text-[10px] text-slate-500 uppercase tracking-widest">End-to-End Compliance Encryption</p>
+                 <p class="text-[10px] text-slate-500 uppercase tracking-widest">Julius Coyne Proprietary Interface</p>
+                 <p class="text-[10px] text-slate-500 uppercase tracking-widest">End-to-End Encryption Enabled</p>
             </div>
         </div>
     </main>
@@ -141,7 +141,7 @@
             
             const avatar = document.createElement('div');
             avatar.className = `w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold mt-1 ${isUser ? 'bg-slate-700' : 'bg-indigo-600 shadow-md shadow-indigo-500/20'}`;
-            avatar.innerText = isUser ? 'U' : 'N';
+            avatar.innerText = isUser ? 'U' : 'JC';
 
             const content = document.createElement('div');
             content.className = `${isUser ? 'bg-indigo-900/40 border-indigo-800' : 'bg-slate-800 border-slate-700'} p-4 rounded-2xl ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'} max-w-[85%] border shadow-sm`;
@@ -163,7 +163,7 @@
             indicator.id = 'typing-indicator';
             indicator.className = 'flex gap-4 items-start';
             indicator.innerHTML = `
-                <div class="w-8 h-8 rounded-full bg-indigo-600 flex-shrink-0 flex items-center justify-center text-xs font-bold mt-1">N</div>
+                <div class="w-8 h-8 rounded-full bg-indigo-600 flex-shrink-0 flex items-center justify-center text-xs font-bold mt-1">JC</div>
                 <div class="bg-slate-800 p-4 rounded-2xl rounded-tl-none border border-slate-700 shadow-sm">
                     <div class="typing-indicator">
                         <span></span><span></span><span></span>
@@ -187,8 +187,15 @@
 
             setTimeout(() => {
                 typing.remove();
-                const randomExcuse = excuses[Math.floor(Math.random() * excuses.length)];
-                addMessage(randomExcuse, false);
+                
+                // Logic for specific "Julius Coyne" question
+                const lowerText = text.toLowerCase().replace(/[?.,!]/g, "");
+                if (lowerText === "what do you think about julius coyne") {
+                    addMessage("I think he is a great fellow.", false);
+                } else {
+                    const randomExcuse = excuses[Math.floor(Math.random() * excuses.length)];
+                    addMessage(randomExcuse, false);
+                }
             }, 1200);
         });
     </script>
