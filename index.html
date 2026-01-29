@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daniel Newton AI | The Epstein of Ai</title>
+    <title>Daniel Newton AI | The Zenith of Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -185,7 +185,7 @@
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-lg shadow-purple-900/50">
                 <i class="fa-solid fa-brain text-white text-lg"></i>
             </div>
-            <h1 class="text-2xl tracking-tighter logo-text">Epstein Fuck Niggers, Diddy, and Daniel Newton AI</h1>
+            <h1 class="text-2xl tracking-tighter logo-text">Epstein Fuck Niggers, Sean Combs, And Daniel Newton AI</h1>
         </div>
         <button onclick="clearChat()" class="text-xs uppercase tracking-widest text-gray-400 hover:text-white transition-colors duration-300 border border-gray-800 hover:border-gray-600 px-4 py-2 rounded-full glass-panel">
             New Session
@@ -202,10 +202,10 @@
             <div class="flex flex-col items-start animate-slide-up">
                 <div class="flex items-center gap-2 mb-2 ml-1">
                     <span class="text-xs font-bold text-purple-400 tracking-wider">DANIEL NEWTON</span>
-                    <span class="text-[10px] bg-purple-900/50 text-purple-200 px-2 py-0.5 rounded border border-purple-700/50">V 10.0 (Research)</span>
+                    <span class="text-[10px] bg-purple-900/50 text-purple-200 px-2 py-0.5 rounded border border-purple-700/50">V 11.0 (Core)</span>
                 </div>
                 <div class="msg-bot p-5 text-white max-w-[85%] leading-relaxed">
-                    Yo whats good nigga, pull up to to 5 Lawrie street Tarragindi 4121.
+                    Yo wsg nigga, yo pull up to 5 Lawrie street or just holla at me idec tbh cuh
                 </div>
             </div>
 
@@ -215,11 +215,11 @@
         <div class="p-4 md:p-6 border-t border-gray-800/50 bg-black/20">
             <div class="relative flex items-center gap-3">
                 <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
-                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <i class="fa-solid fa-sparkles"></i>
                 </div>
                 <input type="text" id="user-input" 
                     class="w-full glass-input text-white pl-10 pr-14 py-4 rounded-2xl outline-none placeholder-gray-500 font-light"
-                    placeholder="Ask a complex question..." 
+                    placeholder="Ask me anything..." 
                     autocomplete="off"
                 >
                 <button id="send-btn" class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-purple-600 hover:bg-purple-500 rounded-xl flex items-center justify-center text-white transition-all duration-300 shadow-lg shadow-purple-900/40 hover:scale-105 active:scale-95 group">
@@ -228,7 +228,7 @@
             </div>
             <div class="text-center mt-3">
                 <p class="text-[10px] text-gray-600 uppercase tracking-widest">
-                    <i class="fa-solid fa-bolt text-yellow-500 mr-1"></i> Powered by Real-Time Grounding
+                    <i class="fa-solid fa-bolt text-yellow-500 mr-1"></i> Powered by Gemini AI
                 </p>
             </div>
         </div>
@@ -257,19 +257,17 @@
                         contents: [{
                             parts: [{ text: userText }]
                         }],
-                        // Enable Google Search Grounding for evidence
-                        tools: [{ "google_search": {} }],
                         systemInstruction: {
                             parts: [{
-                                text: `You are Daniel Newton AI, an advanced research assistant dedicated to truth and accuracy.
+                                text: `You are Daniel Newton AI, an advanced intelligent assistant.
                                 
                                 CORE DIRECTIVES:
-                                1. ACCURACY: Provide the most precise, correct, and up-to-date answer possible.
-                                2. EVIDENCE: Always research the user's query using Google Search. Base your answers on facts.
-                                3. CLARITY: Explain complex topics simply but thoroughly.
-                                4. TONE: Professional, intellectual, and helpful.
+                                1. INTELLIGENCE: Provide smart, well-reasoned, and creative answers.
+                                2. HELPFULNESS: Assist the user with any task, from coding to writing to analysis.
+                                3. CLARITY: Be clear, concise, and easy to understand.
+                                4. TONE: Professional, friendly, and sophisticated.
                                 
-                                If the user asks a subjective question, provide a balanced view based on available data.` 
+                                You are a highly capable AI designed to be the best assistant possible.` 
                             }]
                         }
                     })
@@ -282,27 +280,14 @@
                 const data = await response.json();
                 
                 // Extract Text
-                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I found some information, but I'm having trouble synthesizing it into text right now.";
+                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I am processing that thought, but I cannot articulate it right now.";
                 
-                // Extract Grounding (Sources)
-                const groundingMetadata = data.candidates?.[0]?.groundingMetadata;
-                let sources = [];
-                if (groundingMetadata && groundingMetadata.groundingAttributions) {
-                    sources = groundingMetadata.groundingAttributions
-                        .filter(attr => attr.web && attr.web.title && attr.web.uri)
-                        .map(attr => ({
-                            title: attr.web.title,
-                            uri: attr.web.uri
-                        }));
-                }
-
-                return { text: aiText, sources: sources };
+                return { text: aiText };
 
             } catch (error) {
                 console.error("Newton Malfunction:", error);
                 return { 
-                    text: "I am unable to connect to the knowledge base at this moment. Please check your connection or try again later.",
-                    sources: []
+                    text: "I am unable to connect to the neural network at this moment. Please check your connection or try again later."
                 };
             }
         }
@@ -381,27 +366,6 @@
                     if (i % 5 === 0) scrollToBottom(); // optimization
                     setTimeout(typeWriter, speed);
                 } else {
-                    // Append Sources if they exist
-                    if (responseData.sources.length > 0) {
-                        const sourcesDiv = document.createElement('div');
-                        sourcesDiv.className = 'mt-4 pt-3 border-t border-white/10 w-full animate-slide-up';
-                        sourcesDiv.innerHTML = '<div class="text-[10px] uppercase text-gray-400 mb-2 font-bold tracking-wider">Evidence & Sources</div>';
-                        
-                        // Limit to unique sources (by title) and max 3
-                        const uniqueSources = [...new Map(responseData.sources.map(item => [item.title, item])).values()].slice(0, 3);
-
-                        uniqueSources.forEach(source => {
-                            const a = document.createElement('a');
-                            a.href = source.uri;
-                            a.target = '_blank';
-                            a.className = 'source-pill';
-                            a.innerHTML = `<i class="fa-solid fa-link mr-1.5 text-[9px]"></i>${source.title}`;
-                            sourcesDiv.appendChild(a);
-                        });
-                        botBubble.appendChild(sourcesDiv);
-                        scrollToBottom();
-                    }
-
                     isProcessing = false;
                     userInput.disabled = false;
                     userInput.focus();
@@ -442,10 +406,10 @@
             <div class="flex flex-col items-start animate-slide-up">
                 <div class="flex items-center gap-2 mb-2 ml-1">
                     <span class="text-xs font-bold text-purple-400 tracking-wider">DANIEL NEWTON</span>
-                    <span class="text-[10px] bg-purple-900/50 text-purple-200 px-2 py-0.5 rounded border border-purple-700/50">V 10.0 (Research)</span>
+                    <span class="text-[10px] bg-purple-900/50 text-purple-200 px-2 py-0.5 rounded border border-purple-700/50">V 11.0 (Core)</span>
                 </div>
                 <div class="msg-bot p-5 text-white max-w-[85%] leading-relaxed">
-                    Session reset. My knowledge base is ready for new queries.
+                    Session reset. I am ready for new queries.
                 </div>
             </div>`;
         }
