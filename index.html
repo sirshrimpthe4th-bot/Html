@@ -38,18 +38,6 @@
             100% { transform: translateY(0px); }
         }
 
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 0 5px rgba(139, 92, 246, 0.2); }
-            50% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.6); }
-            100% { box-shadow: 0 0 5px rgba(139, 92, 246, 0.2); }
-        }
-
-        @keyframes gradient-bg {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         @keyframes slide-up {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -92,7 +80,7 @@
         }
 
         .msg-bot {
-            background: linear-gradient(135deg, #7c3aed, #6d28d9); /* Violet/Purple */
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
             border-radius: 18px 18px 18px 2px;
             box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
             border: 1px solid rgba(255,255,255,0.1);
@@ -164,7 +152,7 @@
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-lg shadow-purple-900/50">
                 <i class="fa-solid fa-brain text-white text-lg"></i>
             </div>
-            <h1 class="text-2xl tracking-tighter logo-text">DANIEL NEWTON AI</h1>
+            <h1 class="text-2xl tracking-tighter logo-text">DANIEL NEWTON AI 2</h1>
         </div>
         <button onclick="clearChat()" class="text-xs uppercase tracking-widest text-gray-400 hover:text-white transition-colors duration-300 border border-gray-800 hover:border-gray-600 px-4 py-2 rounded-full glass-panel">
             New Session
@@ -205,6 +193,11 @@
                     <i class="fa-solid fa-arrow-up text-sm group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
                 </button>
             </div>
+            <div id="api-warning" class="hidden text-center mt-2">
+                <p class="text-[10px] text-red-400 uppercase tracking-widest">
+                   <i class="fa-solid fa-triangle-exclamation mr-1"></i> API Key Missing
+                </p>
+            </div>
             <div class="text-center mt-3">
                 <p class="text-[10px] text-gray-600 uppercase tracking-widest">
                     <i class="fa-solid fa-bolt text-yellow-500 mr-1"></i> Powered by Gemini AI
@@ -215,108 +208,68 @@
     </main>
 
     <script type="module">
-        // --- Configuration ---
-        const apiKey = ""; // The execution environment provides the key at runtime.
+        // --- API CONFIGURATION ---
+        // 1. FOR VERCEL: Add an Environment Variable named 'GEMINI_API_KEY' in your project settings.
+        // 2. FOR LOCAL: You can paste your key below where it says 'YOUR_KEY_HERE'.
+        const apiKey = "" || "YOUR_KEY_HERE"; 
+
         const chatContainer = document.getElementById('chat-container');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
+        const apiWarning = document.getElementById('api-warning');
         let isProcessing = false;
 
-        // --- Core Logic ---
+        // Check if key exists
+        if (!apiKey || apiKey === "YOUR_KEY_HERE") {
+            apiWarning.classList.remove('hidden');
+        }
 
-        // Helper for exponential backoff retries
         async function fetchWithRetry(url, options, maxRetries = 5) {
             let delay = 1000;
             for (let i = 0; i < maxRetries; i++) {
                 try {
                     const response = await fetch(url, options);
                     if (response.ok) return response;
-                    if (response.status !== 429 && response.status < 500) break; // Don't retry client errors except rate limits
+                    if (response.status === 403 || response.status === 400) {
+                        throw new Error("Invalid API Key. Please check your credentials.");
+                    }
+                    if (response.status !== 429 && response.status < 500) break;
                 } catch (e) {
                     if (i === maxRetries - 1) throw e;
                 }
                 await new Promise(resolve => setTimeout(resolve, delay));
                 delay *= 2;
             }
-            throw new Error('Failed after multiple retries');
+            throw new Error('Connection failed. Please try again later.');
         }
 
         async function getNewtonResponse(userText) {
+            if (!apiKey || apiKey === "YOUR_KEY_HERE") {
+                return "System Error: No API Key found. To use this on Vercel, please provide a Gemini API Key in the code or environment variables.";
+            }
+
+            const apiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
             try {
-                const response = await fetchWithRetry(
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            contents: [{
-                                parts: [{ text: userText }]
-                            }],
-                            systemInstruction: {
-                                parts: [{
-                                    text: `You are Daniel Newton AI, an advanced intelligent assistant.
-                                    
-                                    CORE DIRECTIVES:
-                                    1. INTELLIGENCE: Provide smart, well-reasoned, and creative answers.
-                                    2. HELPFULNESS: Assist the user with any task, from coding to writing to analysis.
-                                    3. CLARITY: Be clear, concise, and easy to understand.
-                                    4. TONE: Professional, friendly, and sophisticated.` 
-                                }]
-                            }
-                        })
-                    }
-                );
+                const response = await fetchWithRetry(apiEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: userText }] }],
+                        systemInstruction: {
+                            parts: [{
+                                text: "You are Daniel Newton AI, a zenith-level intelligence model. Be sophisticated, articulate, and helpful."
+                            }]
+                        }
+                    })
+                });
 
                 const data = await response.json();
-                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I apologize, but I am unable to formulate a response at this moment.";
-                return { text: aiText };
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "I am processing, but could not generate text.";
 
             } catch (error) {
-                console.error("Newton connection error:", error);
-                return { 
-                    text: "I am having trouble accessing my neural network. Please check your connection or try again shortly."
-                };
+                return `Connection Error: ${error.message}`;
             }
-        }
-
-        // --- UI Functions ---
-
-        function appendUserMessage(text) {
-            const div = document.createElement('div');
-            div.className = 'flex flex-col items-end animate-slide-up';
-            div.innerHTML = `
-                <div class="flex items-center gap-2 mb-2 mr-1">
-                    <span class="text-xs font-bold text-blue-400 tracking-wider">YOU</span>
-                </div>
-                <div class="msg-user p-5 text-white max-w-[85%] leading-relaxed text-right">
-                    ${escapeHtml(text)}
-                </div>
-            `;
-            chatContainer.appendChild(div);
-            scrollToBottom();
-        }
-
-        function createBotMessageContainer() {
-            const div = document.createElement('div');
-            div.className = 'flex flex-col items-start animate-slide-up mb-4';
-            div.innerHTML = `
-                <div class="flex items-center gap-2 mb-2 ml-1">
-                    <span class="text-xs font-bold text-purple-400 tracking-wider">DANIEL NEWTON</span>
-                    <span class="text-[10px] bg-purple-900/50 text-purple-200 px-2 py-0.5 rounded border border-purple-700/50">V 11.0</span>
-                </div>
-                <div class="msg-bot p-5 text-white max-w-[85%] leading-relaxed min-h-[60px] flex flex-col justify-center">
-                    <div class="typing-indicator flex gap-1">
-                        <span class="typing-dot"></span>
-                        <span class="typing-dot"></span>
-                        <span class="typing-dot"></span>
-                    </div>
-                </div>
-            `;
-            chatContainer.appendChild(div);
-            scrollToBottom();
-            return div.querySelector('.msg-bot');
         }
 
         async function handleSend() {
@@ -327,65 +280,72 @@
             userInput.value = '';
             userInput.disabled = true;
             
-            appendUserMessage(text);
-            const botBubble = createBotMessageContainer();
-            const typingIndicator = botBubble.querySelector('.typing-indicator');
+            appendMessage('YOU', text, 'msg-user');
+            const botBubble = createBotBubble();
+            const response = await getNewtonResponse(text);
+            
+            botBubble.innerHTML = '';
+            typeWriter(botBubble, response);
+        }
 
-            const responseData = await getNewtonResponse(text);
-            typingIndicator.remove();
-            
-            const contentDiv = document.createElement('div');
-            botBubble.appendChild(contentDiv);
-            
+        function appendMessage(sender, text, className) {
+            const div = document.createElement('div');
+            div.className = `flex flex-col ${sender === 'YOU' ? 'items-end' : 'items-start'} animate-slide-up mb-4`;
+            div.innerHTML = `
+                <div class="flex items-center gap-2 mb-2 ${sender === 'YOU' ? 'mr-1' : 'ml-1'}">
+                    <span class="text-xs font-bold ${sender === 'YOU' ? 'text-blue-400' : 'text-purple-400'} tracking-wider">${sender}</span>
+                </div>
+                <div class="${className} p-5 text-white max-w-[85%] leading-relaxed ${sender === 'YOU' ? 'text-right' : ''}">
+                    ${escapeHtml(text)}
+                </div>
+            `;
+            chatContainer.appendChild(div);
+            scrollToBottom();
+        }
+
+        function createBotBubble() {
+            const div = document.createElement('div');
+            div.className = 'flex flex-col items-start animate-slide-up mb-4';
+            div.innerHTML = `
+                <div class="flex items-center gap-2 mb-2 ml-1">
+                    <span class="text-xs font-bold text-purple-400 tracking-wider">DANIEL NEWTON</span>
+                </div>
+                <div class="msg-bot p-5 text-white max-w-[85%] leading-relaxed">
+                    <div class="typing-indicator flex gap-1"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>
+                </div>
+            `;
+            chatContainer.appendChild(div);
+            scrollToBottom();
+            return div.querySelector('.msg-bot');
+        }
+
+        function typeWriter(element, text) {
             let i = 0;
-            const speed = 10; 
-            
-            function typeWriter() {
-                if (i < responseData.text.length) {
-                    contentDiv.textContent += responseData.text.charAt(i);
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
                     i++;
                     if (i % 5 === 0) scrollToBottom();
-                    setTimeout(typeWriter, speed);
+                    setTimeout(type, 10);
                 } else {
-                    scrollToBottom();
                     isProcessing = false;
                     userInput.disabled = false;
                     userInput.focus();
+                    scrollToBottom();
                 }
             }
-            
-            setTimeout(typeWriter, 300);
+            type();
         }
 
-        function scrollToBottom() {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function escapeHtml(unsafe) {
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
+        function scrollToBottom() { chatContainer.scrollTop = chatContainer.scrollHeight; }
+        function escapeHtml(t) { return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
         sendBtn.addEventListener('click', handleSend);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSend();
-        });
+        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
 
-        window.clearChat = function() {
-            chatContainer.innerHTML = `
-            <div class="flex flex-col items-start animate-slide-up">
-                <div class="flex items-center gap-2 mb-2 ml-1">
-                    <span class="text-xs font-bold text-purple-400 tracking-wider">DANIEL NEWTON</span>
-                    <span class="text-[10px] bg-purple-900/50 text-purple-200 px-2 py-0.5 rounded border border-purple-700/50">V 11.0 (Core)</span>
-                </div>
-                <div class="msg-bot p-5 text-white max-w-[85%] leading-relaxed">
-                    Session reset. I am ready for new queries.
-                </div>
-            </div>`;
+        window.clearChat = () => {
+            chatContainer.innerHTML = '';
+            appendMessage('DANIEL NEWTON', 'Session reset. I am ready.', 'msg-bot');
         }
     </script>
 </body>
