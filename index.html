@@ -152,7 +152,7 @@
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-lg shadow-purple-900/50">
                 <i class="fa-solid fa-brain text-white text-lg"></i>
             </div>
-            <h1 class="text-2xl tracking-tighter logo-text">DANIEL NEWTON AI 2</h1>
+            <h1 class="text-2xl tracking-tighter logo-text">DANIEL NEWTON AI</h1>
         </div>
         <button onclick="clearChat()" class="text-xs uppercase tracking-widest text-gray-400 hover:text-white transition-colors duration-300 border border-gray-800 hover:border-gray-600 px-4 py-2 rounded-full glass-panel">
             New Session
@@ -195,7 +195,7 @@
             </div>
             <div id="api-warning" class="hidden text-center mt-2">
                 <p class="text-[10px] text-red-400 uppercase tracking-widest">
-                   <i class="fa-solid fa-triangle-exclamation mr-1"></i> API Key Missing
+                   <i class="fa-solid fa-triangle-exclamation mr-1"></i> API Connection Pending
                 </p>
             </div>
             <div class="text-center mt-3">
@@ -209,9 +209,8 @@
 
     <script type="module">
         // --- API CONFIGURATION ---
-        // 1. FOR VERCEL: Add an Environment Variable named 'GEMINI_API_KEY' in your project settings.
-        // 2. FOR LOCAL: You can paste your key below where it says 'YOUR_KEY_HERE'.
-        const apiKey = "" || "YOUR_KEY_HERE"; 
+        // REPLACE THE EMPTY STRING BELOW WITH YOUR KEY FROM https://aistudio.google.com/
+        const apiKey = "AIzaSyD_Mum2aqMzuMWQHjX01fZZlhSUy6Zq9X4"; 
 
         const chatContainer = document.getElementById('chat-container');
         const userInput = document.getElementById('user-input');
@@ -219,8 +218,9 @@
         const apiWarning = document.getElementById('api-warning');
         let isProcessing = false;
 
-        // Check if key exists
-        if (!apiKey || apiKey === "YOUR_KEY_HERE") {
+        // Visual warning if developer forgot the key
+        if (!apiKey) {
+            console.warn("Daniel Newton AI: API Key is missing. Site will not respond.");
             apiWarning.classList.remove('hidden');
         }
 
@@ -230,8 +230,10 @@
                 try {
                     const response = await fetch(url, options);
                     if (response.ok) return response;
+                    
+                    const errorJson = await response.json().catch(() => ({}));
                     if (response.status === 403 || response.status === 400) {
-                        throw new Error("Invalid API Key. Please check your credentials.");
+                        throw new Error(errorJson?.error?.message || "Invalid API Key or Request.");
                     }
                     if (response.status !== 429 && response.status < 500) break;
                 } catch (e) {
@@ -240,12 +242,12 @@
                 await new Promise(resolve => setTimeout(resolve, delay));
                 delay *= 2;
             }
-            throw new Error('Connection failed. Please try again later.');
+            throw new Error('Neural network link unstable. Check your API key.');
         }
 
         async function getNewtonResponse(userText) {
-            if (!apiKey || apiKey === "YOUR_KEY_HERE") {
-                return "System Error: No API Key found. To use this on Vercel, please provide a Gemini API Key in the code or environment variables.";
+            if (!apiKey) {
+                return "ERROR: No API Key detected. Please paste your Google Gemini API Key into the index.html file script section.";
             }
 
             const apiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
@@ -258,17 +260,17 @@
                         contents: [{ parts: [{ text: userText }] }],
                         systemInstruction: {
                             parts: [{
-                                text: "You are Daniel Newton AI, a zenith-level intelligence model. Be sophisticated, articulate, and helpful."
+                                text: "You are Daniel Newton AI, a zenith-level intelligence model. Your responses should be sophisticated, highly intelligent, and helpful."
                             }]
                         }
                     })
                 });
 
                 const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "I am processing, but could not generate text.";
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Response stream interrupted.";
 
             } catch (error) {
-                return `Connection Error: ${error.message}`;
+                return `CONNECTION FAILED: ${error.message}`;
             }
         }
 
@@ -345,7 +347,7 @@
 
         window.clearChat = () => {
             chatContainer.innerHTML = '';
-            appendMessage('DANIEL NEWTON', 'Session reset. I am ready.', 'msg-bot');
+            appendMessage('DANIEL NEWTON', 'System recalibrated. How may I assist you?', 'msg-bot');
         }
     </script>
 </body>
