@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daniel Newton AI | The Zenith of Intelligence</title>
+    <title>Daniel Newton AI | The Zenith of Cringe</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -209,7 +209,6 @@
 
     <script type="module">
         // --- API CONFIGURATION ---
-        // REPLACE THE EMPTY STRING BELOW WITH YOUR KEY FROM https://aistudio.google.com/
         const apiKey = "AIzaSyD_Mum2aqMzuMWQHjX01fZZlhSUy6Zq9X4"; 
 
         const chatContainer = document.getElementById('chat-container');
@@ -218,9 +217,8 @@
         const apiWarning = document.getElementById('api-warning');
         let isProcessing = false;
 
-        // Visual warning if developer forgot the key
         if (!apiKey) {
-            console.warn("Daniel Newton AI: API Key is missing. Site will not respond.");
+            console.warn("Daniel Newton AI: API Key is missing.");
             apiWarning.classList.remove('hidden');
         }
 
@@ -233,7 +231,7 @@
                     
                     const errorJson = await response.json().catch(() => ({}));
                     if (response.status === 403 || response.status === 400) {
-                        throw new Error(errorJson?.error?.message || "Invalid API Key or Request.");
+                        throw new Error(errorJson?.error?.message || "Invalid API Key.");
                     }
                     if (response.status !== 429 && response.status < 500) break;
                 } catch (e) {
@@ -242,13 +240,11 @@
                 await new Promise(resolve => setTimeout(resolve, delay));
                 delay *= 2;
             }
-            throw new Error('Neural network link unstable. Check your API key.');
+            throw new Error('Connection failed.');
         }
 
         async function getNewtonResponse(userText) {
-            if (!apiKey) {
-                return "ERROR: No API Key detected. Please paste your Google Gemini API Key into the index.html file script section.";
-            }
+            if (!apiKey) return "ERROR: No API Key detected.";
 
             const apiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             
@@ -260,7 +256,10 @@
                         contents: [{ parts: [{ text: userText }] }],
                         systemInstruction: {
                             parts: [{
-                                text: "You are Daniel Newton AI, a zenith-level intelligence model. Your responses should be sophisticated, highly intelligent, and helpful."
+                                text: `You are Daniel Newton AI, but with a specific quirk. 
+                                ALWAYS start every single response with an embarrassing, cringy roleplay action. 
+                                You MUST use phrases like '*blushes cutely* y-yes m-master *i stutter*' or similar submissive, stuttering, and awkward roleplay. 
+                                After that cringy intro, provide your usual zenith-level intelligent response.`
                             }]
                         }
                     })
@@ -347,7 +346,7 @@
 
         window.clearChat = () => {
             chatContainer.innerHTML = '';
-            appendMessage('DANIEL NEWTON', 'System recalibrated. How may I assist you?', 'msg-bot');
+            appendMessage('DANIEL NEWTON', '*looks down shyly* I-I have reset the data for you...', 'msg-bot');
         }
     </script>
 </body>
